@@ -18,7 +18,20 @@ jobs:
           chmod +x opa
           sudo mv opa /usr/local/bin/
 
+      - name: Prepare Input Data
+        run: |
+          echo '{
+            "resource_type": "s3_bucket",
+            "action": "create",
+            "tags": {
+              "Environment": "Production",
+              "Owner": "TeamA"
+            }
+          }' > input.json
+
       - name: Validate Policy
         run: |
-          opa eval --data path/to/policy.rego --input path/to/input.json "data.example.s3.allow"
+          opa eval --data path/to/policy.rego --input input.json "data.example.s3.allow" || exit 1
 
+      - name: Policy Check Passed
+        run: echo "Policy check passed!"
