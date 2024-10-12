@@ -1,0 +1,24 @@
+name: Validate S3 Bucket Tags
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install OPA
+        run: |
+          wget https://github.com/open-policy-agent/opa/releases/latest/download/opa_linux_amd64 -O opa
+          chmod +x opa
+          sudo mv opa /usr/local/bin/
+
+      - name: Validate Policy
+        run: |
+          opa eval --data path/to/policy.rego --input path/to/input.json "data.example.s3.allow"
+
